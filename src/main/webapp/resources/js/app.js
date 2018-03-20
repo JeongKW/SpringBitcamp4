@@ -1,43 +1,58 @@
 var app = app || {};
-var route = route || {};
-app = (()=>{
-  var init =x=>{
-    onCreate(x);
-    setContentView();
-  };
-  var onCreate =x=>{
-    route.init(x);
-  };
-  var setContentView =()=>{
-    alert(route.$());
-    $('#wrapper').empty();
-    app.algorithm.init();
-  };
-  return {
-    init : init
-  };
+
+app =(()=>{
+  var init=x=>{
+      $.getScript(x+'/resources/js/router.js',()=>{
+        $.extend(new router(x));
+        app.algorithm.onCreate();
+      })
+    };
+  return{init:init};
 })();
 
-app.algorithm = (()=>{
-  var init=()=> {
-    onCreate();
-    setContentView();
-  };
-  var onCreate=()=>{
-    
+app.algorithm=(()=>{
+  var $wrapper,context,algorithm,view;
+  var onCreate =()=>{
+      $wrapper = $('#wrapper');
+      $content = $('#content');
+      context = $.context();
+      algorithm = $.javascript()+'/algorithm.js';
+      view = $.javascript()+'/view.js';
+      setContentView();
   };
   var setContentView=()=>{
-    $('#wrapper').html('<h1>Hello AJAX !!</h1>');
-  };
-  return {init:init};
-})();
-
-route = (()=>{
-  var init=x=>{
-    sessionStorage.setItem('x', x);
-  }; 
-  var $=()=> {return sessionStorage.getItem('x')}
-  var onCreate =()=>{};
-  var setContentView =()=>{};
-  return {init:init, $:$};
+      $wrapper.empty();
+      $.getScript(view, ()=>{
+        $wrapper.html(navigation());
+        $(createButtonNav1st()).appendTo($('#div-nav-1st'))
+        .click(()=>{
+          alert('button click');
+        });
+        $(createButtonLogin()).appendTo($('#li-login'))
+        .click(()=>{
+          alert('Login button click!!');
+        });
+        $(createSequence()).appendTo($('#ul-util'))
+        .click(()=>{
+          $content.html(sequenceCalc());
+        });
+        $(createMath()).appendTo($('#ul-util'))
+        .click(()=>{
+          alert('Math button click!!');
+        });
+        $(createMatrix()).appendTo($('#ul-util'))
+        .click(()=>{
+          alert('Matrix button click!!');
+        });
+        $(createSort()).appendTo($('#ul-util'))
+        .click(()=>{
+          alert('Sort button click!!');
+        });
+        $(createApplication()).appendTo($('#ul-util'))
+        .click(()=>{
+          alert('Application button click!!');
+        });
+      });
+    };
+  return {onCreate:onCreate};
 })();
