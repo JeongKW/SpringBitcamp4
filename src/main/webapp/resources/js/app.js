@@ -1,19 +1,114 @@
 var app = app || {};
 
-app =(()=>{
-	var init=x=>{
+app = {init : x=>{
 	    $.getScript(x+'/resources/js/router.js',()=>{
 	      $.extend(new router(x));
 	      app.algorithm.onCreate();
 	      app.member.onCreate();
 	    })
-	  };
-	return{init:init};
+	  }};
+app.board2=(x=>{
+	var onCreate=()=>{
+		$wrapper = $('#wrapper');
+		$content = $('#content');
+		context = $.context();
+		img = $.image();
+		view = $.javascript()+'/view.js';
+		setContentView();
+	};
+	var setContentView=()=>{
+		articles(1);
+	};
+	var articles=x=>{
+		$.getJSON(context+'/articles/'+x, d=>{
+			$.getScript(view, ()=>{
+				$('#content').empty();
+				$(createDiv({id : 'div-board', clazz : 'container'}))
+				.attr('style', 'margin-top: 50px')
+				.append($(createCommonTab({id : 'tab-board', clazz : 'hover'})))
+				.appendTo('#content');
+				$(createThead(createTh({list : ['글번호', '글제목', '작성일', '아이디']}))).appendTo('#tab-board');
+				$(createTbody(createTr({list : d.list}))).appendTo('#tab-board');
+				$(createDiv({id : 'div-page', clazz : 'text-center'})).appendTo('#content');
+				$(createUL({id : 'ul-page', clazz : 'pagination'})).appendTo('#div-page');
+				if(d.page.blockPrev){
+					$(createLI({id : 'li-prev', clazz : ''})).appendTo('#ul-page');
+					$(createATag({id : 'a-prev', val : '<span aria-hidden="true">&laquo;</span>'}))
+					.appendTo('#li-prev')
+					.attr('onclick', 'app.board2.articles('+(d.page.pageStart - 1)+'); return false;')
+					.attr('aria-label', 'Previous');
+				}
+				for(var i = d.page.pageStart; i <= d.page.pageEnd; i++){
+					if(d.page.nowPage === i){
+						$(createLI({id : 'li-'+i, clazz : 'active'})).appendTo('#ul-page');
+						$(createATag({id : 'a-'+i, val : i}))
+						.appendTo('#li-'+i)
+						.attr('onclick','app.board2.articles('+i+'); return false;');
+					} else {
+						$(createLI({id : 'li-'+i, clazz : ''})).appendTo('#ul-page');
+						$(createATag({id : 'a-'+i, val : i}))
+						.appendTo('#li-'+i)
+						.attr('onclick','app.board2.articles('+i+'); return false;');
+					}
+				}
+				if(d.page.blockNext){
+					$(createLI({id : 'li-next', clazz : ''})).appendTo('#ul-page');
+					$(createATag({id : 'a-next', val : '<span aria-hidden="true">&raquo;</span>'}))
+					.appendTo('#li-next')
+					.attr('onclick', 'app.board2.articles('+(d.page.pageEnd + 1)+'); return false;')
+					.attr('aria-label', 'Next');
+				}
+			});
+		});
+	};
+	return {onCreate : onCreate, articles : articles};
 })();
-
-app.board=(()=>{
-	
-});
+app.board={
+		articles : x=>{
+			alert('돌아온 값 : '+ x);
+			$.getJSON(x.context+'/articles/'+x.nowPage, d=>{
+				$.getScript(x.context+'/resources/js/view.js',()=>{
+					$('#content').empty();
+					$('#content').attr('class', 'container');
+					$(createDiv({id : 'div-board', clazz : 'container'}))
+					.append($(createCommonTab({id : 'tab-board', clazz : 'hover'})))
+					.appendTo('#content');
+					$(createTh({list : ['글번호', '글제목', '작성일', '아이디']}))
+					.appendTo('#tab-board');
+					$(createTr({list : d.list})).appendTo('#tab-board');
+					$(createDiv({id : 'div-page', clazz : 'text-center'})).appendTo('#content');
+					$(createUL({id : 'ul-page', clazz : 'pagination'})).appendTo('#div-page');
+					if(d.page.blockPrev){
+						$(createLI({id : 'li-prev', clazz : ''})).appendTo('#ul-page');
+						$(createATag({id : 'a-prev', val : '<span aria-hidden="true">&laquo;</span>'}))
+						.appendTo('#li-prev')
+						.attr('onclick', 'app.board.articles({context : '+x.context+', nowPage : '+(d.page.pageStart + 1)+'}); return false;')
+						.attr('aria-label', 'Previous');
+					}
+					for(var i = d.page.pageStart; i <= d.page.pageEnd; i++){
+						if(d.page.nowPage === i){
+							$(createLI({id : 'li-'+i, clazz : 'active'})).appendTo('#ul-page');
+							$(createATag({id : 'a-'+i, val : i}))
+							.appendTo('#li-'+i)
+							.attr('onclick','app.board.articles({context : '+x.context+', nowPage : '+i+'}); return false;');
+						} else {
+							$(createLI({id : 'li-'+i, clazz : ''})).appendTo('#ul-page');
+							$(createATag({id : 'a-'+i, val : i}))
+							.appendTo('#li-'+i)
+							.attr('onclick','app.board.articles({context : '+x.context+', nowPage : '+i+'}); return false;');
+						}
+					}
+					if(d.page.blockNext){
+						$(createLI({id : 'li-next', clazz : ''})).appendTo('#ul-page');
+						$(createATag({id : 'a-next', val : '<span aria-hidden="true">&raquo;</span>'}))
+						.appendTo('#li-next')
+						.attr('onclick', 'app.board.articles({context : '+x.context+', nowPage : '+(d.page.pageEnd + 1)+'}); return false;')
+						.attr('aria-label', 'Next');
+					}
+				});
+			});
+		}
+};
 app.member=(()=>{
 	var $wrapper,context,view,data;
 	var onCreate =()=>{
@@ -35,12 +130,12 @@ app.member=(()=>{
 			.appendTo('#div-login-btn')
 			.on('click', e=>{
 				e.preventDefault();
+				var id = $('#id').val();
 				var json = {
-						'id' : $('#id').val(),
 						'pass' : $('#password').val()
 				}
 				$.ajax({
-					url : context+'/member/login',
+					url : context+'/members/'+id+'/login',
 					method : 'POST',
 					data : JSON.stringify(json),
 					dataType : 'json',
@@ -73,11 +168,6 @@ app.member=(()=>{
 	};
 	var mypage=x=>{
 		alert('마이페이지를 구성하기 위한 정보 : '+x.id);
-		$(createATag({id : 'a-board', val : createSpan({clazz : 'glyphicon-bullhorn', val : '자유게시판'})}))
-		.appendTo('#li-board')
-		.click(()=>{
-			alert('자유게시판 click');
-		});
 		$content.html($(createDiv({id : 'content', clazz : 'container'}))
 				.attr('style', 'padding-bottom: 0px')
 				.append(createMypageTab({id : '', clazz : 'hover', json : x}))
@@ -115,13 +205,18 @@ app.algorithm=(()=>{
 	    	.click(()=>{
 	    		app.member.onCreate();
 	    	});
+	    	$(createATag({id : 'a-board', val : createSpan({clazz : 'glyphicon-bullhorn', val : '자유게시판'})}))
+			.appendTo('#li-board')
+			.click(()=>{
+//				app.board.articles({context : context, nowPage : 1});
+				app.board2.onCreate();
+			});
 	    	$(createATag({ id : '', val : createSpan({ clazz : 'glyphicon-user', val : '로그인'}) }))
 	    	.appendTo('#li-login')
 	    	.click(()=>{
 	    		alert('login button click!');
 	    	});
-	    	json = { id : '', val : '수열' };
-	    	$(createATag(json))
+	    	$(createATag({ id : '', val : '수열' }))
 	    	.appendTo('#li-sequence')
 	    	.click(()=>{
 	    		$content.html($(createDiv({ id : 'content-tab', val : 'container' }))

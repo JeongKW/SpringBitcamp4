@@ -230,6 +230,75 @@ var createTab=x=>{
 	return tab;
 };
 
+var createCommonTab=x=>{
+	return '<table id="'+x.id+'" class="table table-'+x.clazz+'"></table>';
+};
+var createThead=x=>{
+	return '<thead>'+x+'</thead>';
+};
+var createTbody=x=>{
+	return '<tbody>'+x+'</tbody>';
+};
+var createTh =x=>{
+	var t = '<tr>';
+	$.each(x.list, (i, j)=>{
+		t += '<th>'+j+'</th>';
+	});
+	t += '</tr>';
+	return t;
+};
+
+var createTr =x=>{
+	var t = '';
+	$.each(x.list, (i, j)=> {
+		t += '<tr>'+createTd({seq : j.bbsSeq, list : j})+'</tr>';
+	});
+	return t;
+};
+
+var createTd =x=>{
+	var t = '';
+	var seq = x.seq;
+	$.each(x.list, (i, j)=>{
+		if(i !== 'content'){
+			if(i === 'title'){
+				t += '<td><a id="a-'+seq+'">'+j+'</a></td>';
+			} else {
+				t += '<td>'+j+'</td>';
+			}
+		}
+	});
+	return t;
+};
+
+var pagination=x=>{
+	return 
+	'	<div class="text-center">'
+	+'		<ul id="page-util" class="pagination">'
+	+'			<c:if test="${page.blockPrev}">'
+	+'				<li><a href="#" onclick="app.boardList(${page.pageStart-1}); return false;" aria-label="Previous"> <span'
+	+'					aria-hidden="true">&laquo;</span>'
+	+'				</a></li>'
+	+'			</c:if>'
+	+'			<c:forEach begin="${page.pageStart}" end="${page.pageEnd}" step="1" varStatus="i">'
+	+'				<c:choose>'
+	+'					<c:when test="${page.nowPage eq i.index}">'
+	+'						<li class="active"><a href="#" onclick="app.boardList(${i.index}); return false;">${i.index}</a></li>'
+	+'					</c:when>'
+	+'					<c:otherwise>'
+	+'						<li><a href="#" onclick="app.boardList(${i.index}); return false;">${i.index}</a></li>'
+	+'					</c:otherwise>'
+	+'				</c:choose>'
+	+'			</c:forEach>'
+	+'			<c:if test="${page.blockNext}">'
+	+'				<li><a href="#" onclick="app.boardList(${page.pageEnd+1}); return false;" aria-label="Next"> <span aria-hidden="true">&raquo;</span>'
+	+'				</a></li>'
+	+'			</c:if>'
+	+'		</ul>'
+	+'	</div>'
+	+'</div>';
+};
+
 var createMypageTab=x=>{
 	var z = 0;
 	var tab = '<table id="'+x.id+'" class="table table-'+x.clazz+'">'

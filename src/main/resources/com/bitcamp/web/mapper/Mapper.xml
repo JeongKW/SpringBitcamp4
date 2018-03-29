@@ -54,4 +54,13 @@
   <select id="exist" resultType="int" parameterType="com.bitcamp.web.domain.Command">
     SELECT COUNT(*) FROM MEMBER WHERE id LIKE #{data1} AND pass LIKE #{data2}
   </select>
+  <select id="articles" resultType="com.bitcamp.web.domain.Board" parameterType="com.bitcamp.web.domain.Command">
+  	SELECT b.bbs_seq AS bbsSeq, b.title, b.content, b.regdate, b.id 
+  		FROM (SELECT @num:=@num+1 as num, bbs_seq, title, content, regdate, id 
+  			FROM (select @num:=0) tmp, board order by bbs_seq desc) b 
+  		WHERE b.num BETWEEN #{data1}+1 AND #{data2}+1;
+  </select>
+  <select id="boardAll" parameterType="com.bitcamp.web.domain.Command" resultType="int">
+  	SELECT COUNT(*) FROM Board
+  </select>
 </mapper>
