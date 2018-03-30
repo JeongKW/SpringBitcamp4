@@ -1,12 +1,93 @@
 var app = app || {};
 
-app = {init : x=>{
+app = {
+		init : x=>{
 	    $.getScript(x+'/resources/js/router.js',()=>{
 	      $.extend(new router(x));
 	      app.algorithm.onCreate();
 	      app.member.onCreate();
 	    })
-	  }};
+	  }
+};
+app.write={
+		move : x=>{
+			$(createATag({ id : '', val : '글쓰기' }))
+	    	.appendTo('#li-sequence')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    		alert('글쓰기 클릭');
+	    		$content.html($(boardwrite()));
+	    		$(createATag({id : 'a-submit', val : '전송'}))
+	    			.attr('class', 'btn btn-success')
+	    			.on('click', e=>{
+	    				e.preventDefault();
+	    				alert('전송 클릭');
+	    			})
+	    			.appendTo('#div-btn-group');
+	    		$(createATag({id : 'a-cancel', val : '취소'}))
+	    			.attr('class', 'btn btn-danger')
+	    			.on('click', e=>{
+	    				e.preventDefault();
+	    				alert('취소 클릭');
+	    			})
+	    			.appendTo('#div-btn-group');
+	    		$(createATag({id : 'a-attach', val : '파일추가'}))
+    			.attr('class', 'btn btn-success')
+    			.on('click', e=>{
+    				e.preventDefault();
+    				alert('파일추가 클릭');
+    				$.magnificPopup.open({
+    					  items: {
+    					    src: $(fileupload())
+    					  },
+    					  type: 'inline'
+    					});
+    			})
+    			.appendTo('#div-btn-group');
+	    	});
+		}
+};
+app.alogout={
+		move : x=>{
+			$(createATag({ id : 'a-logout', val : createSpan({ clazz : 'glyphicon-minus-sign', val : '로그아웃'}) }))
+	    	.appendTo('#li-login')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    		alert('logout button click!');
+	    	});
+		}
+};
+app.alogin={
+		move : x=>{
+			$(createATag({ id : 'a-login', val : createSpan({ clazz : 'glyphicon-user', val : '로그인'}) }))
+	    	.appendTo('#li-login')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    		alert('login button click!');
+	    	});
+		}
+};
+app.aboard={
+		move : x=>{
+			$(createATag({id : 'a-board', val : createSpan({clazz : 'glyphicon-bullhorn', val : '자유게시판'})}))
+			.appendTo('#li-board')
+			.on('click', e=>{
+				e.preventDefault();
+//				app.board.articles({context : context, nowPage : 1});
+				app.board2.onCreate();
+			});	
+		}
+};
+app.ahome={
+		move : x=>{
+			$(createATag({ id : 'a-home', val : createSpan({clazz : 'glyphicon-home', val : 'HOME'})}))
+	    	.appendTo('#li-home')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    		app.member.onCreate();
+	    	});
+		}
+};
 app.board2=(x=>{
 	var onCreate=()=>{
 		$wrapper = $('#wrapper');
@@ -17,16 +98,42 @@ app.board2=(x=>{
 		setContentView();
 	};
 	var setContentView=()=>{
+		navsetting();
 		articles(1);
 	};
+	var navsetting=()=>{
+		$.getScript(view, ()=>{
+			$("#li-sequence").empty();
+			$("#li-math").empty();
+			$("#li-matrix").empty();
+			$("#li-sort").empty();
+			$("#li-application").empty();
+			app.write.move('');
+			$(createATag({ id : '', val : '수정' }))
+	    	.appendTo('#li-math')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    	});
+			$(createATag({ id : '', val : '삭제' }))
+	    	.appendTo('#li-matrix')
+	    	.on('click', e=>{
+	    		e.preventDefault();
+	    	});
+		});
+	}
 	var articles=x=>{
 		$.getJSON(context+'/articles/'+x, d=>{
 			$.getScript(view, ()=>{
 				$('#content').empty();
 				$(createDiv({id : 'div-board', clazz : 'container'}))
 				.attr('style', 'margin-top: 50px')
+				.append($(createDiv({id : 'div-search', clazz : 'input-group'})).attr('style', 'margin-bottom: 35px'))
 				.append($(createCommonTab({id : 'tab-board', clazz : 'hover'})))
 				.appendTo('#content');
+				$(createInputText({id : 'input-search', clazz : 'form-control', placeholder : 'Search for'}))
+				.appendTo('#div-search');
+				$(createButton({id : 'btn-search', clazz : 'btn btn-default', val : 'Search'}))
+				.appendTo($(createText('input-group-btn')).appendTo('#div-search'));
 				$(createThead(createTh({list : ['글번호', '글제목', '작성일', '아이디']}))).appendTo('#tab-board');
 				$(createTbody(createTr({list : d.list}))).appendTo('#tab-board');
 				$(createDiv({id : 'div-page', clazz : 'text-center'})).appendTo('#content');
@@ -61,7 +168,7 @@ app.board2=(x=>{
 			});
 		});
 	};
-	return {onCreate : onCreate, articles : articles};
+	return {onCreate : onCreate, articles : articles}; //  closer articles recursive
 })();
 app.board={
 		articles : x=>{
@@ -130,44 +237,45 @@ app.member=(()=>{
 			.appendTo('#div-login-btn')
 			.on('click', e=>{
 				e.preventDefault();
-				var id = $('#id').val();
-				var json = {
-						'pass' : $('#password').val()
-				}
-				$.ajax({
-					url : context+'/members/'+id+'/login',
-					method : 'POST',
-					data : JSON.stringify(json),
-					dataType : 'json',
-					contentType : 'application/json',
-					success : x=>{
-						alert('로그인 성공여부: '+x.success);
-						if(x.success == 1){
-							var json = {
-									id : x.user.id,
-									pass : x.user.pass,
-									ssn : x.user.ssn,
-									name : x.user.name,
-									phone : x.user.phone,
-									email : x.user.email,
-									addr : x.user.addr,
-									profile : x.user.profile
-							}
-							mypage(json);
-						}
-					},
-					error : (x, h, m)=>{
-						alert('로그인에서 에러 발생 x='+x+', h='+h+', m='+m);
-					}
-				});
+				login();
 			});
 		});
 	};
 	var login=()=>{
-                        
+		var id = $('#id').val();
+		var json = {
+				'pass' : $('#password').val()
+		}
+		$.ajax({
+			url : context+'/members/'+id+'/login',
+			method : 'POST',
+			data : JSON.stringify(json),
+			dataType : 'json',
+			contentType : 'application/json',
+			success : x=>{
+				alert('로그인 성공여부: '+x.success);
+				if(x.success == 1){
+					var json = {
+							id : x.user.id,
+							pass : x.user.pass,
+							ssn : x.user.ssn,
+							name : x.user.name,
+							phone : x.user.phone,
+							email : x.user.email,
+							addr : x.user.addr,
+							profile : x.user.profile
+					}
+					mypage(json);
+				}
+			},
+			error : (x, h, m)=>{
+				alert('로그인에서 에러 발생 x='+x+', h='+h+', m='+m);
+			}
+		});                
 	};
 	var mypage=x=>{
-		alert('마이페이지를 구성하기 위한 정보 : '+x.id);
+		$('#li-login').empty();
+		app.alogout.move();
 		$content.html($(createDiv({id : 'content', clazz : 'container'}))
 				.attr('style', 'padding-bottom: 0px')
 				.append(createMypageTab({id : '', clazz : 'hover', json : x}))
@@ -200,22 +308,9 @@ app.algorithm=(()=>{
 	    	var json = null;
 	    	$wrapper.html(navigation());
 	    	$content.html($(createDiv({id : 'div-home', clazz : 'container'})).attr('style', 'margin-top: 50px;'));
-	    	$(createATag({ id : 'a-home', val : createSpan({clazz : 'glyphicon-home', val : 'HOME'})}))
-	    	.appendTo('#li-home')
-	    	.click(()=>{
-	    		app.member.onCreate();
-	    	});
-	    	$(createATag({id : 'a-board', val : createSpan({clazz : 'glyphicon-bullhorn', val : '자유게시판'})}))
-			.appendTo('#li-board')
-			.click(()=>{
-//				app.board.articles({context : context, nowPage : 1});
-				app.board2.onCreate();
-			});
-	    	$(createATag({ id : '', val : createSpan({ clazz : 'glyphicon-user', val : '로그인'}) }))
-	    	.appendTo('#li-login')
-	    	.click(()=>{
-	    		alert('login button click!');
-	    	});
+	    	app.ahome.move();
+	    	app.aboard.move();
+	    	app.alogin.move();
 	    	$(createATag({ id : '', val : '수열' }))
 	    	.appendTo('#li-sequence')
 	    	.click(()=>{

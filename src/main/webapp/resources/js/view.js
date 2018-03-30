@@ -1,3 +1,48 @@
+var fileupload=()=>{
+	return '<div class="container white-popup">'
+	+'	<div class="row">'
+	+'		<div class="text-center">'
+	+'			<h4 style="color: purple; font-size: 40px">File Upload</h4>'
+	+'		</div>'
+	+'		<div class="text-center">'
+	+'			<span class="glyphicon glyphicon-sort fa-5x"'
+	+'				style="font-size: 20px;"></span>'
+	+'		</div>'
+	+'		<br />'
+	+'	</div>'
+	+'	<div class="row" style="padding-left: 40px; padding-right: 40px">'
+	+'		<div class="form-group">'
+	+'			<input type="file" name="file" class=""'
+	+'				style="border: 1px solid gray; width: 100%"><br>'
+	+'		</div>'
+	+'	</div>'
+	+'	<div class="row">'
+	+'		<div id="div-upload" class="btn-group pull-right" style="margin-right: 40px">'
+	+'			<input class="btn btn-danger" type="reset" value="취소"> <input'
+	+'				class="btn btn-primary" type="submit" value="확인">'
+	+'		</div>'
+	+'	</div>'
+	+'</div>';
+};
+var boardwrite=()=>{
+	return '<div class="container">'
+	+'	<h2>글쓰기 <br><small><br>Title(제목), Content(내용)을 완성하시고 전송을 눌러주세요.</small></h2><br>'
+	+'		<div class="form-group">'
+	+'			<label for="usr">Title</label> <input name="title" type="text"'
+	+'				class="form-control" id="usr"><br/> <label for="comment">Content</label>'
+	+'			<textarea name="content" class="form-control" rows="15"'
+	+'				id="comment"></textarea>'
+	+'		</div>'
+	+'	<div class="row">'
+	+'		<div class="col-sm-8"></div>'
+	+'		<div class="col-sm-4" style="text-align: right">'
+	+'			<div id="div-btn-group" class="btn-group">'
+	+'			</div>'
+	+'		</div>'
+	+'	</div>'
+	+'</div>';
+};
+
 var myPage=(x,y)=>{
   return '<div id="'+y+'" class="container" style="padding-bottom: 0px">'
   +'    <h3>회원정보</h3><hr/>'
@@ -206,14 +251,14 @@ var createLI=x=>{
 }
 var createInputText=x=>{
 	return $('<input type="text" id="'+x.id+'"class="'+x.clazz
-      +'"placeholder="example">');
+      +'"placeholder="'+x.placeholder+'">');
 }
 var createButton=x=>{
 	return '<button type ="button" id="'+x.id+'" class="btn '+x.clazz+'">'+x.val+'</button>';
 }
 
 var createText=x=>{
-	return '<span id="'+x+'"></span>';
+	return '<span class="'+x+'"></span>';
 }
 
 var createTab=x=>{
