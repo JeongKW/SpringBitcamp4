@@ -1,5 +1,7 @@
 package com.bitcamp.web.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bitcamp.web.domain.Board;
 import com.bitcamp.web.domain.Command;
 import com.bitcamp.web.domain.Member;
 import com.bitcamp.web.domain.Page;
+import com.bitcamp.web.enums.ImageRepo;
 import com.bitcamp.web.mapper.Mapper;
 import com.bitcamp.web.service.ICountService;
 import com.bitcamp.web.service.IGetService;
+import com.bitcamp.web.util.FileProxy;
 import com.bitcamp.web.util.PageAdapter;
 
 @RestController
@@ -80,12 +85,29 @@ public class Controller {
 	public Map<?,?> putArticles(){
 		return null;
 	}
-	@RequestMapping(value = "/boards/{seq}", method=RequestMethod.GET, 
+	@RequestMapping(value = "/board/file/upload", method=RequestMethod.POST, 
 			consumes="application/json")
-	public Map<?,?> getArticle(
-			@PathVariable String seq){
+	public Map<?,?> fileUpload(FileProxy pxy) throws IllegalStateException, IOException{
 		Map<String, Object> map = new HashMap<>();
+		logger.info("fileUpload() is {}", "entered");
+		String fileName = pxy.getFile().getOriginalFilename();
+		logger.info("upload file name : {}", fileName);
+		String path = ImageRepo.UPLOAD_PATH + File.separator + fileName;
 		
+		File file = new File(path);
+		
+		pxy.getFile().transferTo(file);
+		
+		map.put("filename", fileName);
+		return map;
+	}
+	@RequestMapping(value = "/board/post/article", method=RequestMethod.POST, 
+			consumes="application/json")
+	public Map<?,?> postArticle(
+			@RequestBody Board board){
+		Map<String, Object> map = new HashMap<>();
+		logger.info("postArticle() is {}", "entered");
+		logger.info("넘어온 ID : {}\n 넘어온 글제목 : {}\n 넘어온 글내용 : {}", board.getId(), board.getTitle(), board.getContent());
 		return map;
 	}
 }

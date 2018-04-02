@@ -18,8 +18,8 @@ var fileupload=()=>{
 	+'	</div>'
 	+'	<div class="row">'
 	+'		<div id="div-upload" class="btn-group pull-right" style="margin-right: 40px">'
-	+'			<input class="btn btn-danger" type="reset" value="취소"> <input'
-	+'				class="btn btn-primary" type="submit" value="확인">'
+	+			createInput({id : 'submit', clazz : '', type : 'submit', placeholder : '제출'})
+	+			createInput({id : 'cancel', clazz : '', type : 'reset', placeholder : '취소'})
 	+'		</div>'
 	+'	</div>'
 	+'</div>';
@@ -28,15 +28,17 @@ var boardwrite=()=>{
 	return '<div class="container">'
 	+'	<h2>글쓰기 <br><small><br>Title(제목), Content(내용)을 완성하시고 전송을 눌러주세요.</small></h2><br>'
 	+'		<div class="form-group">'
-	+'			<label for="usr">Title</label> <input name="title" type="text"'
-	+'				class="form-control" id="usr"><br/> <label for="comment">Content</label>'
+	+'			<label for="input-name">NickName</label> <input name="name" type="text"'
+	+'				class="form-control" id="input-name"><br/>'
+	+'			<label for="input-title">Title</label> <input name="title" type="text"'
+	+'				class="form-control" id="input-title"><br/> <label for="input-comment">Comment</label>'
 	+'			<textarea name="content" class="form-control" rows="15"'
-	+'				id="comment"></textarea>'
+	+'				id="input-comment"></textarea>'
 	+'		</div>'
 	+'	<div class="row">'
 	+'		<div class="col-sm-8"></div>'
 	+'		<div class="col-sm-4" style="text-align: right">'
-	+'			<div id="div-btn-group" class="btn-group">'
+	+'			<div id="div-btn-group" class="btn btn-group">'
 	+'			</div>'
 	+'		</div>'
 	+'	</div>'
@@ -108,6 +110,11 @@ var myPage=(x,y)=>{
 function hello() {
 	return '<h1>Hello AJAX 2~!!</h1>';
 };
+
+var createForm=x=>{
+	return '<form id="'+x.id+'" class="'+x.clazz+'" action="'+x.action+'" method="post"></form>';
+};
+
 var loginView=x=>{
 	return '<div id="'+x+'" class="container">'
 	+'    <div class="row">'
@@ -249,9 +256,9 @@ var createUL=x=>{
 var createLI=x=>{
 	return '<li id="'+x.id+'" class="'+x.clazz+'"></li>';
 }
-var createInputText=x=>{
-	return $('<input type="text" id="'+x.id+'"class="'+x.clazz
-      +'"placeholder="'+x.placeholder+'">');
+var createInput=x=>{
+	return '<input type="'+x.type+'" id="'+x.id+'"class="'+x.clazz
+      +' "value="'+x.placeholder+'">';
 }
 var createButton=x=>{
 	return '<button type ="button" id="'+x.id+'" class="btn '+x.clazz+'">'+x.val+'</button>';

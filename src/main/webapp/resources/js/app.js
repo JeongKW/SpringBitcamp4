@@ -16,16 +16,44 @@ app.write={
 	    	.on('click', e=>{
 	    		e.preventDefault();
 	    		alert('글쓰기 클릭');
-	    		$content.html($(boardwrite()));
+	    		$content.html($(createForm({id : 'form-write', clazz : '', action : ''})));
+	    		$(boardwrite()).appendTo('#form-write');
 	    		$(createATag({id : 'a-submit', val : '전송'}))
 	    			.attr('class', 'btn btn-success')
+	    			.attr('style', 'margin-right:5px')
 	    			.on('click', e=>{
 	    				e.preventDefault();
-	    				alert('전송 클릭');
+	    				$.ajax({
+	    					url:context+'/board/post/article',
+	    					data:JSON.stringify({
+	    						title : $('#input-title').val(),
+		    					content : $('#input-comment').val(),
+		    					id : $('#input-name').val()
+	    					}),
+	    					dataType : 'json',
+	    					contentType : 'application/json',
+	    					method : 'POST',
+	    					success : d=>{
+	    						alert('성공 !');
+	    						$('#form-write').ajaxForm({
+	    							url : context+'/board/file/upload',
+	    							dataType : 'text',
+	    							enctype : "multipart/form-data",
+	    							beforeSubmit : function(){
+	    								alert('로딩화면 !');
+	    							},
+	    							success : function(data){
+	    								alert('등록완료 ! ' + data.result);
+	    							}
+	    						}).submit();
+	    					},
+	    					error : function(x,s,m){ alert(m); }
+	    				});
 	    			})
 	    			.appendTo('#div-btn-group');
 	    		$(createATag({id : 'a-cancel', val : '취소'}))
 	    			.attr('class', 'btn btn-danger')
+	    			.attr('style', 'margin-right:5px')
 	    			.on('click', e=>{
 	    				e.preventDefault();
 	    				alert('취소 클릭');
@@ -38,7 +66,7 @@ app.write={
     				alert('파일추가 클릭');
     				$.magnificPopup.open({
     					  items: {
-    					    src: $(fileupload())
+    					    src: ($(createForm({id : 'form-file', clazz : '', action : context+'/board/file/upload'})).append($(fileupload())))
     					  },
     					  type: 'inline'
     					});
@@ -130,7 +158,7 @@ app.board2=(x=>{
 				.append($(createDiv({id : 'div-search', clazz : 'input-group'})).attr('style', 'margin-bottom: 35px'))
 				.append($(createCommonTab({id : 'tab-board', clazz : 'hover'})))
 				.appendTo('#content');
-				$(createInputText({id : 'input-search', clazz : 'form-control', placeholder : 'Search for'}))
+				$(createInput({id : 'input-search', clazz : 'form-control', type : 'text', placeholder : 'Search for'}))
 				.appendTo('#div-search');
 				$(createButton({id : 'btn-search', clazz : 'btn btn-default', val : 'Search'}))
 				.appendTo($(createText('input-group-btn')).appendTo('#div-search'));
@@ -336,15 +364,15 @@ app.algorithm=(()=>{
 	            $(createATag({id : '', val : '결과'})).attr('style', 'color:white').appendTo('#li-result');
 	            // Default
 	           
-	            createInputText({id : 'first', clazz : 'form-control'})
+	            createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 				.attr('placeholder','초기값 입력')
 				.attr('style', 'background-color: #faffbd')
 				.appendTo($right);
-				createInputText({id : 'last', clazz : 'form-control'})
+				createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 				.attr('placeholder','리미트값 입력')
 				.attr('style', 'background-color: #faffbd')
 				.appendTo($right);
-				createInputText({id : 'differ', clazz : 'form-control'})
+				createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 				.attr('placeholder','공차 입력')
 				.attr('style', 'background-color: #faffbd')
 				.appendTo($right);
@@ -378,15 +406,15 @@ app.algorithm=(()=>{
 				$('#a-arith').on('click', ()=>{
 					$right.empty();
 					$result.empty();
-					createInputText({id : 'first', clazz : 'form-control'})
+					createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','초기값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리미트값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'differ', clazz : 'form-control'})
+					createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','공차 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
@@ -421,15 +449,15 @@ app.algorithm=(()=>{
 				$('#a-switch').on('click', ()=>{
 					$right.empty();
 					$result.empty();
-					createInputText({id : 'first', clazz : 'form-control'})
+					createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','초기값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리미트값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'differ', clazz : 'form-control'})
+					createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','공차 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
@@ -463,15 +491,15 @@ app.algorithm=(()=>{
 				$('#a-geo').on('click', ()=>{
 					$right.empty();
 					$result.empty();
-					createInputText({id : 'first', clazz : 'form-control'})
+					createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','초기값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리미트값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'differ', clazz : 'form-control'})
+					createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','공비 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
@@ -506,11 +534,11 @@ app.algorithm=(()=>{
 				$('#a-fact').on('click', ()=>{
 					$right.empty();
 					$result.empty();
-					createInputText({id : 'first', clazz : 'form-control'})
+					createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','초기값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리미트값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
@@ -545,15 +573,15 @@ app.algorithm=(()=>{
 				$('#a-fibo').on('click', ()=>{
 					$right.empty();
 					$result.empty();
-					createInputText({id : 'first', clazz : 'form-control'})
+					createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','첫번째 갑 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'differ', clazz : 'form-control'})
+					createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','두번째값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리밋값 입력')
 					.attr('style', 'background-color: #faffbd')
 					.appendTo($right);
@@ -610,7 +638,7 @@ app.algorithm=(()=>{
 	    			$('#a-th').text(mathList()[0]);
 	    			
 	    			var $right=$('#0'), $result=$('#td-result');
-	    			createInputText({id : 'rangeNum', clazz : 'form-control'})
+	    			createInput({id : 'rangeNum', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','구할 숫자의 범위 입력')
 					.appendTo($right);
 	    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -641,7 +669,7 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[0]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'rangeNum', clazz : 'form-control'})
+		    			createInput({id : 'rangeNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','구할 숫자의 범위 입력')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -674,10 +702,10 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[1]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','첫번째 정수를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','두번째 정수를 입력하세요.')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -713,7 +741,7 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[2]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','숫자를 입력하세요.')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -745,19 +773,19 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[3]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','1번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','2번째 숫자를 입력하세요.')
 						.appendTo($right);	
-		    			createInputText({id : 'thirdNum', clazz : 'form-control'})
+		    			createInput({id : 'thirdNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','3번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'fourthNum', clazz : 'form-control'})
+		    			createInput({id : 'fourthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','4번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'fifthNum', clazz : 'form-control'})
+		    			createInput({id : 'fifthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','5번째 숫자를 입력하세요.')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -794,7 +822,7 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[4]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','숫자를 입력하세요.')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -824,19 +852,19 @@ app.algorithm=(()=>{
 						$('#a-th').text(mathList()[5]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','1번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','2번째 숫자를 입력하세요.')
 						.appendTo($right);	
-		    			createInputText({id : 'thirdNum', clazz : 'form-control'})
+		    			createInput({id : 'thirdNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','3번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'fourthNum', clazz : 'form-control'})
+		    			createInput({id : 'fourthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','4번째 숫자를 입력하세요.')
 						.appendTo($right);
-		    			createInputText({id : 'fifthNum', clazz : 'form-control'})
+		    			createInput({id : 'fifthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','5번째 숫자를 입력하세요.')
 						.appendTo($right);
 		    			$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -913,13 +941,13 @@ app.algorithm=(()=>{
 	    			$('#0').attr('style', 'background-color: #faffbd');
 	    			$('#a-th').text(sortList()[0]);
 	    			var $right=$('#0'), $result=$('#td-result');
-	    			createInputText({id : 'first', clazz : 'form-control'})
+	    			createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','초기값 입력')
 					.appendTo($right);
-					createInputText({id : 'last', clazz : 'form-control'})
+					createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','리미트값 입력')
 					.appendTo($right);
-					createInputText({id : 'differ', clazz : 'form-control'})
+					createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 					.attr('placeholder','공차 입력')
 					.appendTo($right);
 					$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -937,13 +965,13 @@ app.algorithm=(()=>{
 					$('#a-td0').on('click', ()=>{
 						$('#a-th').text(sortList()[0]);
 						$right.empty();
-		    			createInputText({id : 'first', clazz : 'form-control'})
+		    			createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','초기값 입력')
 						.appendTo($right);
-						createInputText({id : 'last', clazz : 'form-control'})
+						createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','리미트값 입력')
 						.appendTo($right);
-						createInputText({id : 'differ', clazz : 'form-control'})
+						createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','공차 입력')
 						.appendTo($right);
 						$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -963,19 +991,19 @@ app.algorithm=(()=>{
 						$('#a-th').text(sortList()[1]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','1번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','2번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'thirdNum', clazz : 'form-control'})
+		    			createInput({id : 'thirdNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','3번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fourthNum', clazz : 'form-control'})
+		    			createInput({id : 'fourthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','4번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fifthNum', clazz : 'form-control'})
+		    			createInput({id : 'fifthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','5번재 값 입력')
 						.appendTo($right);
 						$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -1011,19 +1039,19 @@ app.algorithm=(()=>{
 						$('#a-th').text(sortList()[2]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','1번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','2번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'thirdNum', clazz : 'form-control'})
+		    			createInput({id : 'thirdNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','3번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fourthNum', clazz : 'form-control'})
+		    			createInput({id : 'fourthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','4번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fifthNum', clazz : 'form-control'})
+		    			createInput({id : 'fifthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','5번재 값 입력')
 						.appendTo($right);
 						$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -1059,19 +1087,19 @@ app.algorithm=(()=>{
 						$('#a-th').text(sortList()[3]);
 						$right.empty();
 						$result.empty();
-		    			createInputText({id : 'firstNum', clazz : 'form-control'})
+		    			createInput({id : 'firstNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','1번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'secondNum', clazz : 'form-control'})
+		    			createInput({id : 'secondNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','2번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'thirdNum', clazz : 'form-control'})
+		    			createInput({id : 'thirdNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','3번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fourthNum', clazz : 'form-control'})
+		    			createInput({id : 'fourthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','4번재 값 입력')
 						.appendTo($right);
-		    			createInputText({id : 'fifthNum', clazz : 'form-control'})
+		    			createInput({id : 'fifthNum', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','5번재 값 입력')
 						.appendTo($right);
 						$(createButton({id : 'btn-result', clazz : 'btn-primary', val : '결과 보기'}))
@@ -1105,15 +1133,15 @@ app.algorithm=(()=>{
 					$('#a-td4').on('click', ()=>{
 						$('#a-th').text(sortList()[4]);
 						$right.empty();
-		    			createInputText({id : 'first', clazz : 'form-control'})
+		    			createInput({id : 'first', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','초기값 입력')
 						.attr('style', 'background-color: #faffbd')
 						.appendTo($right);
-						createInputText({id : 'last', clazz : 'form-control'})
+						createInput({id : 'last', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','리미트값 입력')
 						.attr('style', 'background-color: #faffbd')
 						.appendTo($right);
-						createInputText({id : 'differ', clazz : 'form-control'})
+						createInput({id : 'differ', clazz : 'form-control', type : 'text', placeholder : ''})
 						.attr('placeholder','공차 입력')
 						.attr('style', 'background-color: #faffbd')
 						.appendTo($right);

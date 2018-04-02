@@ -17,16 +17,7 @@ public class PageAdapter {
 		page.setPageEnd(0);
 		page.setBlockPrev(false);
 		page.setBlockNext(false);
-		logger.info("totalcount : {}", page.getTotalCount());
-		logger.info("startRow : {}", page.getStartRow());
-		logger.info("EndRow : {}", page.getEndRow());
-		logger.info("PageStart : {}", page.getPageStart());
-		logger.info("PageEnd : {}", page.getPageEnd());
-		logger.info("PageSize : {}", page.getPageSize());
-		logger.info("NowPage : {}", page.getNowPage());
-		logger.info("TotalPage : {}", page.getTotalPage());
-		logger.info("BlockPrev : {}", page.isBlockPrev());
-		logger.info("BlockNext : {}", page.isBlockNext());
+
 		return page;
 	}
 }
